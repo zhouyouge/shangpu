@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyrk.dao.BoothDao">
+    <insert id="addBooth" parameterType="boothinformation">
+    insert  into boothinformation (breakoutName,towerName,floorName,boothNumber,boothCoding
+,planningForms,coveredArea,operatingArea,comment,boothBreakoutStatus,booth_createtime,booth_updatetime
+)
+values(#{breakoutName},#{towerName},#{floorName},#{boothNumber},#{boothCoding}
+,#{planningForms},#{coveredArea},#{operatingArea},#{comment},#{boothBreakoutStatus},now(),now())
+    </insert>
+
+    <select id="BoothCount" resultType="int" parameterType="BoothParameter">
+       SELECT count(boothNumber) from boothinformation
+        <trim>
+            <where>
+                1=1
+                <if test="booth_createtime!=null and booth_createtime!='' and booth_updatetime!='' and
+  booth_updatetime!=null">
+                    and   booth_createtime &gt;= #{booth_createtime}
+                    and booth_createtime &lt;= #{booth_updatetime}
+                </if>
+                <if test="boothNumber!=null and boothNumber!='' ">
+                    and   boothNumber like #{boothNumber}
+                </if>
+
+            </where>
+        </trim>
+    </select>
+    <!--分页查询-->
+    <select id="queryBoothList" resultType="boothinformation" parameterType="BoothParameter">
+        SELECT * from boothinformation
+        <trim>
+            <where>
+                1=1
+                <if test="booth_createtime!=null and booth_createtime!='' and booth_updatetime!='' and
+  booth_updatetime!=null">
+                    and   booth_createtime &gt;= #{booth_createtime}
+                    and booth_createtime &lt;= #{booth_updatetime}
+                </if>
+                <if test="boothNumber!=null and boothNumber!='' ">
+                and    boothNumber like #{boothNumber}
+                </if>
+
+            </where>
+        </trim>
+        order By
+        <if test="orderBy!=null and orderBy!=''">
+            ${orderBy}
+        </if>
+
+        <if test="orderBy!=null or orderBy!=''">
+        ${orderType}
+    </if>
+        limit #{PageIndex},#{PageSize}
+    </select>
+
+    <select id="toUpdateBoothOut" parameterType="boothinformation" resultType="boothinformation" >
+        select * from boothinformation where boothNumber=#{boothNumber}
+    </select>
+
+    <update id="updateBoothOut" parameterType="boothinformation">
+        update boothinformation set
+       breakoutName= #{breakoutName},towerName=#{towerName},
+       floorName=#{floorName},
+       boothCoding=#{boothCoding},planningForms=#{planningForms},
+       coveredArea=#{coveredArea},operatingArea=#{operatingArea},
+       comment=#{comment},boothBreakoutStatus=#{boothBreakoutStatus},booth_updatetime=now()
+          where boothNumber=#{boothNumber}
+    </update>
+    <delete id="deleteBooth" parameterType="boothinformation">
+        delete from boothinformation where boothNumber=#{boothNumber}
+    </delete>
+
+</mapper>

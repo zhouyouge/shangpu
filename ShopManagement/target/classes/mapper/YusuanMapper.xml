@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyrk.dao.YusuanDao">
+    <select id="Yusuan1" parameterType="Yusuan"  resultType="Yusuan">
+SELECT  a.boothNumber,a.breakoutName,a.towerName,a.floorName,a.operatingArea,
+a.annual,a.rent
+<trim >
+    <if test="erYue!=null and erYue !=''">
+        ,b.rent as rent2
+    </if>
+    <if test="sanYue!=null and sanYue !=''">
+        ,c.rent as rent3
+    </if>
+    <if test="siYue!=null and siYue !=''">
+        ,d.rent as rent4
+    </if>
+    <if test="wuYue!=null and wuYue !=''">
+        ,e.rent as rent5
+    </if>
+    <if test="liuYue!=null and liuYue !=''">
+        ,f.rent as rent6
+    </if>
+</trim>
+        from
+(
+SELECT bo.boothNumber as boothNumber,bo.breakoutName as breakoutName,bo.towerName as towerName,
+bo.floorName as  floorName,bo.operatingArea as operatingArea,a.annual as  annual,a.rent  as rent
+from  ashopprice a INNER JOIN boothinformation bo on a.boothNumber=bo.boothNumber where a.annual like '%-01-%' and a.annual like '2020%'
+)a
+        <if test="erYue!=null and erYue !=''">
+
+        INNER JOIN
+        (
+        SELECT a.rent  as rent,a.boothNumber as boothNumber
+        from  ashopprice a INNER JOIN boothinformation bo on a.boothNumber=bo.boothNumber where a.annual like '%-02-%' and a.annual like '2020%'
+        )b on  a.boothNumber=b.boothNumber
+            <if test="sanYue!=null and sanYue !=''">
+                INNER JOIN
+                (
+                SELECT a.rent  as rent,a.boothNumber as boothNumber
+                from  ashopprice a INNER JOIN boothinformation bo on a.boothNumber=bo.boothNumber where a.annual like '%-03-%' and a.annual like '2020%'
+                )c on  c.boothNumber=b.boothNumber
+            </if>
+            <if test="siYue!=null and siYue !=''">
+                INNER JOIN
+                (
+                SELECT a.rent  as rent,a.boothNumber as boothNumber
+                from  ashopprice a INNER JOIN boothinformation bo on a.boothNumber=bo.boothNumber where a.annual like '%-04-%' and a.annual like '2020%'
+                )d on  c.boothNumber=d.boothNumber
+            </if>
+            <if test="wuYue!=null and wuYue !=''">
+                INNER JOIN
+                (
+                SELECT a.rent  as rent,a.boothNumber as boothNumber
+                from  ashopprice a INNER JOIN boothinformation bo on a.boothNumber=bo.boothNumber where a.annual like '%-05-%' and a.annual like '2020%'
+                )e on  d.boothNumber=e.boothNumber
+            </if>
+            <if test="liuYue!=null and liuYue !=''">
+                INNER JOIN
+                (
+                SELECT a.rent  as rent,a.boothNumber as boothNumber
+                from  ashopprice a INNER JOIN boothinformation bo on a.boothNumber=bo.boothNumber where a.annual like '%-06-%' and a.annual like '2020%'
+                )f on  e.boothNumber=f.boothNumber
+            </if>
+        </if>
+    </select>
+    <select id="Yusuan2" parameterType="Yusuan"  resultType="Yusuan">
+SELECT  g.boothNumber,g.breakoutName,g.towerName,g.floorName,g.operatingArea,
+g.rent as rent7
+        <trim >
+            <if test="baYue!=null and baYue !=''">
+                ,h.rent as rent8
+            </if>
+            <if test="jiuYue!=null and jiuYue !=''">
+                ,i.rent as rent9
+            </if>
+            <if test="shiYue!=null and shiYue !=''">
+                ,j.rent as rent10
+            </if>
+            <if test="shiyiYue!=null and shiyiYue !=''">
+                ,k.rent as rent11
+            </if>
+            <if test="shierYue!=null and shierYue !=''">
+                ,l.rent as rent12
+            </if>
+        </trim>
+from
+        (
+        SELECT a.rent  as rent,a.boothNumber as boothNumber,
+        bo.breakoutName as breakoutName,bo.towerName as towerName,bo.floorName as floorName,bo.operatingArea as operatingArea
+        from  ashopprice a INNER JOIN boothinformation bo on a.boothNumber=bo.boothNumber where a.annual like '%-07-%' and a.annual like #{nian}
+        )g
+        <trim >
+            <if test="baYue!=null and baYue !=''">
+                INNER JOIN
+                (
+                SELECT a.rent  as rent,a.boothNumber as boothNumber
+                from  ashopprice a INNER JOIN boothinformation bo on a.boothNumber=bo.boothNumber where a.annual like '%-08-%' and a.annual like #{nian}
+                )h on  h.boothNumber=g.boothNumber
+            </if>
+            <if test="jiuYue!=null and jiuYue !=''">
+                INNER JOIN
+                (
+                SELECT a.rent  as rent,a.boothNumber as boothNumber
+                from  ashopprice a INNER JOIN boothinformation bo on a.boothNumber=bo.boothNumber where a.annual like '%-09-%' and a.annual like #{nian}
+                )i on  h.boothNumber=i.boothNumber
+            </if>
+            <if test="shiYue!=null and shiYue !=''">
+                INNER JOIN
+                (
+                SELECT a.rent  as rent,a.boothNumber as boothNumber
+                from  ashopprice a INNER JOIN boothinformation bo on a.boothNumber=bo.boothNumber where a.annual like '%-10-%' and a.annual like #{nian}
+                )j on  i.boothNumber=j.boothNumber
+
+            </if>
+            <if test="shiyiYue!=null and shiyiYue !=''">
+                INNER JOIN
+                (
+                SELECT a.rent  as rent,a.boothNumber as boothNumber
+                from  ashopprice a INNER JOIN boothinformation bo on a.boothNumber=bo.boothNumber where a.annual like '%-11-%' and a.annual like #{nian}
+                )k on  k.boothNumber=j.boothNumber
+            </if>
+            <if test="shierYue!=null and shierYue !=''">
+                INNER JOIN
+                (
+                SELECT a.rent  as rent,a.boothNumber as boothNumber
+                from  ashopprice a INNER JOIN boothinformation bo on a.boothNumber=bo.boothNumber where a.annual like '%-12-%' and a.annual like  #{nian}
+                )l on  l.boothNumber=k.boothNumber
+            </if>
+        </trim>
+
+    </select>
+</mapper>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyrk.dao.AshopPriceDao">
+    <insert id="addAshopprice" parameterType="Ashopprice">
+    insert  into ashopprice (annual,rentHoliday,SasacGuidedPrices,marketPrice
+,marketCompanyPricing,marketHistoryPrice,networkHistoryPrice,boothNumber,rent,ashop_createtime,
+ashop_updatetime
+)
+values(now(),#{rentHoliday},#{SasacGuidedPrices},#{marketPrice}
+,#{marketCompanyPricing},#{marketHistoryPrice},#{networkHistoryPrice},#{boothNumber},#{rent}
+,now(),now())
+    </insert>
+
+    <select id="AshoppriceCount" resultType="int" parameterType="AshopriceParameter">
+   SELECT count(boothNumber) from ashopprice
+        <where>
+            1=1
+            <if test="ashop_createtime!=null and ashop_createtime!='' and ashop_updatetime!='' and
+  ashop_updatetime!=null">
+                and   ashop_createtime &gt;= #{ashop_createtime}
+                and ashop_updatetime &lt;= #{ashop_updatetime}
+            </if>
+            <if test="boothNumber!=null and boothNumber!='' ">
+                and boothNumber like #{boothNumber}
+            </if>
+        </where>
+    </select>
+    <!--分页查询-->
+    <select id="queryAshoppriceList" resultType="com.lyrk.entity.Ashopprice" parameterType="AshopriceParameter">
+        SELECT * from ashopprice
+      <trim>
+          <where>
+              1=1
+              <if test="ashop_createtime!=null and ashop_createtime!='' and ashop_updatetime!='' and
+  ashop_updatetime!=null">
+                  and   ashop_createtime &gt;= #{ashop_createtime}
+                  and ashop_updatetime &lt;= #{ashop_updatetime}
+              </if>
+              <if test="boothNumber!=null and boothNumber!='' ">
+                  and boothNumber like #{boothNumber}
+              </if>
+          </where>
+      </trim>
+            order By
+            <if test="orderBy!=null and orderBy!=''">
+                ${orderBy}
+            </if>
+
+            <if test="orderBy!=null or orderBy!=''">
+                ${orderType}
+            </if>
+        limit #{PageIndex},#{PageSize}
+    </select>
+
+    <select id="toUpdateAshopprice" parameterType="com.lyrk.entity.Ashopprice" resultType="com.lyrk.entity.Ashopprice" >
+     select * from ashopprice where ashopId=#{ashopId}
+    </select>
+    
+    <update id="updateAshopprice" parameterType="com.lyrk.entity.Ashopprice">
+        update ashopprice set
+      annual=now(),rentHoliday=#{rentHoliday},SasacGuidedPrices=#{SasacGuidedPrices},
+      marketPrice=#{marketPrice},marketCompanyPricing=#{marketCompanyPricing},marketHistoryPrice=#{marketHistoryPrice},
+      networkHistoryPrice=#{networkHistoryPrice}
+      where ashopId=#{ashopId}
+
+    </update>
+
+    <delete id="deleteAshopprice" parameterType="com.lyrk.entity.Ashopprice">
+       delete from ashopprice where ashopId=#{ashopId}
+    </delete>
+</mapper>

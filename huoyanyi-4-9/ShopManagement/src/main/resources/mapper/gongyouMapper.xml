@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyrk.dao.GongyouDao">
+    <!--有参数为单查，没有参数为全查-->
+<select id="getBreakout" parameterType="Gongyou"  resultType="Breakout">
+select * from  breakout_information
+<trim>
+    <where>
+        <if test="breakoutName!=null and breakoutName!=''">
+            breakoutName=#{breakoutName}
+        </if>
+    </where>
+</trim>
+</select>
+
+    <select id="getTowner" parameterType="Gongyou" resultType="Tower_informationexpression">
+select * from   tower_informationExpression where breakoutName=#{breakoutName}
+</select>
+
+   <select id="getFloor" parameterType="Gongyou" resultType="FloorInformation">
+select * from  FloorInformation where towerName=#{towerName}
+</select>
+
+
+</mapper>

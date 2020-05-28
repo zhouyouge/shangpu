@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyrk.dao.TowerDao">
+    <insert id="addTower" parameterType="Tower_informationexpression">
+    insert  into tower_informationExpression (breakoutName,towerCoding,towerName,towerStatus,coveredArea
+,operatingArea,upFloorNumber,downFloorNumber,comment,towerImage,tower_BreakoutStatus,
+tower_createtime,tower_updatetime
+)
+values(#{breakoutName},#{towerCoding},#{towerName},#{towerStatus},#{coveredArea}
+,#{operatingArea},#{upFloorNumber},#{downFloorNumber},#{comment},#{towerImage},
+#{tower_BreakoutStatus},now(),now())
+    </insert>
+
+    <select id="towerCount" resultType="int" parameterType="TowerParameter">
+       SELECT count(towerName) from Tower_informationexpression
+        <trim>
+            <where>
+                1=1
+                <if test="tower_createtime!=null and tower_createtime!='' and tower_updatetime!='' and
+  tower_updatetime!=null">
+                    and   tower_createtime &gt;= #{tower_createtime}
+                    and tower_createtime &lt;= #{tower_updatetime}
+                </if>
+                <if test="towerName!=null and towerName!='' ">
+                    and towerName like #{towerName}
+                </if>
+            </where>
+        </trim>
+    </select>
+    <!--分页查询-->
+    <select id="queryTowerList" resultType="Tower_informationexpression" parameterType="TowerParameter">
+        SELECT * from tower_informationExpression
+      <trim>
+          <where>
+              1=1
+              <if test="tower_createtime!=null and tower_createtime!='' and tower_updatetime!='' and
+  tower_updatetime!=null">
+                  and   tower_createtime &gt;= #{tower_createtime}
+                  and tower_createtime &lt;= #{tower_updatetime}
+              </if>
+              <if test="towerName!=null and towerName!='' ">
+                  and towerName like #{towerName}
+              </if>
+          </where>
+      </trim>
+            order By
+            <if test="orderBy!=null and orderBy!=''">
+                ${orderBy}
+            </if>
+
+            <if test="orderBy!=null or orderBy!=''">
+                ${orderType}
+            </if>
+        limit #{PageIndex},#{PageSize}
+    </select>
+
+    <select id="toUpdateTowerOut" parameterType="Tower_informationexpression" resultType="Tower_informationexpression" >
+        select * from tower_informationExpression where towerName=#{towerName}
+    </select>
+    
+    <update id="updateTowerOut" parameterType="Tower_informationexpression">
+        update tower_informationExpression set
+       breakoutName= #{breakoutName},towerCoding=#{towerCoding},
+       towerStatus=#{towerStatus},
+       coveredArea=#{coveredArea},operatingArea=#{operatingArea},
+       upFloorNumber=#{upFloorNumber},downFloorNumber=#{downFloorNumber},
+       comment=#{comment},towerImage=#{towerImage},
+       tower_BreakoutStatus=#{tower_BreakoutStatus},tower_updatetime=now()
+          where towerName=#{towerName}
+    </update>
+
+    <delete id="deleteTower" parameterType="Tower_informationexpression">
+        delete from tower_informationExpression where towerName=#{towerName}
+    </delete>
+
+    <!--删除楼栋信息-->
+    <select id="getFloor" parameterType="Tower_informationexpression" resultType="int">
+        SELECT count(*) from floorinformation where towerName=#{towerName}
+    </select>
+</mapper>

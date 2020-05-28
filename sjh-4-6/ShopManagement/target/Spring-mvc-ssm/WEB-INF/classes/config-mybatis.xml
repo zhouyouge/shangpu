@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--mybatis的行为配置-->
+    <settings>
+        <!--开启日志打印（）-->
+        <setting name="logImpl" value="LOG4J"/>
+        <setting name="autoMappingBehavior" value="PARTIAL"/>
+    </settings>
+    <!--实体类别名配置-->
+    <typeAliases>
+        <!--给com.kgc.bank_entity.Users取一个别名users-->
+        <package name="com.lyrk.entity"/>
+    </typeAliases>
+    <!--mapper配置文件-->
+    <mappers>
+        <mapper resource="mapper/commercialactivitiesMapper.xml"/>
+        <mapper resource="mapper/BreakOutMapper.xml"/>
+        <mapper resource="mapper/gongyouMapper.xml"/>
+        <mapper resource="mapper/TowerMapper.xml"/>
+        <mapper resource="mapper/FloorMapper.xml"/>
+        <mapper resource="mapper/TenementMapper.xml"/>
+        <mapper resource="mapper/ashopPriceMapper.xml"/>
+        <mapper resource="mapper/DisversifiedMapper.xml"/>
+        <mapper resource="mapper/UserMapper.xml"/>
+        <mapper resource="mapper/BillMapper.xml"/>
+        <mapper resource="mapper/BankAccountMapper.xml"/>
+        <mapper resource="mapper/BillMapper.xml"/>
+        <mapper resource="mapper/ContractMapper.xml"/>
+        <mapper resource="mapper/BoothMapper.xml"/>
+        <mapper resource="mapper/HouseSourceMapper.xml"/>
+        <mapper resource="mapper/HouseWhereMapper.xml"/>
+        <mapper resource="mapper/PaymenttermMapper.xml"/>
+    </mappers>
+</configuration>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyrk.dao.PaymenttermDao">
+    <insert id="addPaymentterm" parameterType="Paymentterm">
+  insert into paymentterm (gatheringName,bankNo,accountName,accountNumber,startTime,startTime)
+  values(#{gatheringName},#{bankNo},#{accountName},#{accountNumber},now(),now())
+  </insert>
+    <select id="towerCount" resultType="int" parameterType="Paymentterm">
+       SELECT count(getheringId) from paymentterm
+        <trim>
+            <where>
+                1=1
+                <if test="startTime!=null and startTime!='' and outTime!='' and
+  outTime!=null">
+                    and   startTime &gt;= #{startTime}
+                    and startTime &lt;= #{outTime}
+                </if>
+                <if test="gatheringName!=null and gatheringName!=''">
+                    and gatheringName like concat ('%',#{gatheringName},'%')
+                </if>
+            </where>
+        </trim>
+    </select>
+    <!--分页查询-->
+    <select id="queryTowerList" resultType="Paymentterm" parameterType="PaymenttermParameter">
+        SELECT * from paymentterm
+        <trim>
+            <where>
+                1=1
+                <if test="startTime!=null and startTime!='' and outTime!='' and
+  outTime!=null">
+                    and   startTime &gt;= #{startTime}
+                    and startTime &lt;= #{outTime}
+                </if>
+                <if test="gatheringName!=null and gatheringName!=''">
+                    and gatheringName like concat ('%',#{gatheringName},'%')
+                </if>
+            </where>
+        </trim>
+        order By
+        <if test="orderBy!=null and orderBy!=''">
+            ${orderBy}
+        </if>
+
+        <if test="orderBy!=null or orderBy!=''">
+            ${orderType}
+        </if>
+        limit #{PageIndex},#{PageSize}
+    </select>
+</mapper>

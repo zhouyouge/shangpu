@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyrk.dao.TenementDao">
+    <insert id="addTenement" parameterType="Tenementlnformation">
+    insert  into Tenementlnformation (tenantCoding,tenantName,tenantType,companyName,IDNumber
+,socialCreditCode,managementForms,rentalArea,tenanStatus,tenanPhone,blacklistStatus,telephone,nationality
+,email,comment,mailingAddress,boothNumber,tentment_createtime,tentment_updatetime
+)
+values(#{tenantCoding},#{tenantName},#{tenantType},#{companyName},#{IDNumber}
+,#{socialCreditCode},#{managementForms},#{rentalArea},#{tenanStatus},#{tenanPhone},
+#{blacklistStatus},#{telephone},#{nationality},#{email},#{comment},#{mailingAddress},#{boothNumber},now(),now())
+    </insert>
+
+    <select id="TenementCount" resultType="int" parameterType="TenementParameter">
+      SELECT count(tenantName) from Tenementlnformation
+    </select>
+    <!--分页查询-->
+    <select id="queryTenementList" resultType="Tenementlnformation" parameterType="TenementParameter">
+        SELECT * from Tenementlnformation
+      <trim>
+          <where>
+              <if test="tenantName!=null and tenantName!='' ">
+                  tenantName=#{tenantName}
+              </if>
+          </where>
+      </trim>
+            order By
+            <if test="orderBy!=null and orderBy!=''">
+                ${orderBy}
+            </if>
+
+            <if test="orderBy!=null or orderBy!=''">
+                ${orderType}
+            </if>
+        limit #{PageIndex},#{PageSize}
+    </select>
+
+    <select id="toUpdateTenement" parameterType="Tenementlnformation" resultType="Tenementlnformation" >
+     select * from Tenementlnformation where tenementId=#{tenementId}
+    </select>
+    
+    <update id="updateTenement" parameterType="Tenementlnformation">
+        update Tenementlnformation set
+      tenantCoding=#{tenantCoding},tenantName=#{tenantName},tenantType=#{tenantType},
+      companyName=#{companyName},IDNumber=#{IDNumber},socialCreditCode=#{socialCreditCode},
+      managementForms=#{managementForms},rentalArea=#{rentalArea},tenanStatus=#{tenanStatus},
+      tenanPhone=#{tenanPhone},blacklistStatus=#{blacklistStatus},telephone=#{telephone},
+      nationality=#{nationality},email=#{email},mailingAddress=#{mailingAddress},
+      boothNumber=#{boothNumber},tentment_createtime=#{tentment_createtime},tentment_updatetime=#{tentment_updatetime}
+      where tenementId=#{tenementId}
+
+    </update>
+
+    <delete id="deleteTenement" parameterType="Tenementlnformation">
+        delete from Tenementlnformation where tenementId=#{tenementId}
+    </delete>
+</mapper>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyrk.dao.CommercialactivitiesDao">
+    <select id="getCommer" resultType="Commercialactivities" parameterType="Commercialactivities">
+        select *from commercialactivities
+        <where>
+            <if test="commercialId!=0 and commercialId!=''">
+                commercialId=#{commercialId}
+            </if>
+        </where>
+    </select>
+
+</mapper>

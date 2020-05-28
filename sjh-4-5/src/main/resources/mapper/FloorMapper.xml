@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyrk.dao.FloorDao">
+    <insert id="addFloor" parameterType="com.lyrk.entity.FloorInformation">
+    insert  into floorinformation (breakoutName,towerName,floorName,floorCoding,coveredArea
+,operatingArea,floorStatus,PropertyType,commnet,floorImage,floor_BreakoutStatus,floor_createtime,
+floor_updatetime
+)
+values(#{breakoutName},#{towerName},#{floorName},#{floorCoding},#{coveredArea}
+,#{operatingArea},#{floorStatus},#{PropertyType},#{commnet},#{floorImage},
+#{floor_BreakoutStatus},now(),now())
+    </insert>
+
+    <select id="FloorCount" resultType="int" parameterType="FloorParameter">
+       SELECT count(floorName) from floorinformation
+    </select>
+    <!--分页查询-->
+    <select id="queryFloorList" resultType="FloorInformation" parameterType="FloorParameter">
+        SELECT * from floorinformation
+      <trim>
+          <where>
+              <if test="floorName!=null and floorName!='' ">
+                  floorName=#{floorName}
+              </if>
+          </where>
+      </trim>
+            order By
+            <if test="orderBy!=null and orderBy!=''">
+                ${orderBy}
+            </if>
+
+            <if test="orderBy!=null or orderBy!=''">
+                ${orderType}
+            </if>
+        limit #{PageIndex},#{PageSize}
+    </select>
+
+    <select id="toUpdateFloor" parameterType="FloorInformation" resultType="FloorInformation" >
+        select * from floorinformation where floorName=#{floorName}
+    </select>
+    
+    <update id="updateFloor" parameterType="FloorInformation">
+        update floorinformation set
+   breakoutName= #{breakoutName},towerName= #{towerName},
+   floorCoding=#{floorCoding},floorCoding=#{floorCoding},coveredArea=#{coveredArea}
+    ,operatingArea=#{operatingArea},floorStatus=#{floorStatus},
+    PropertyType=#{PropertyType},commnet=#{commnet},floorImage=#{floorImage},
+    floor_BreakoutStatus=#{floor_BreakoutStatus},
+    floor_updatetime=now()
+          where floorName=#{floorName}
+    </update>
+
+    <delete id="deleteTower" parameterType="FloorInformation">
+        delete from floorinformation where  floorName=#{floorName}
+    </delete>
+</mapper>

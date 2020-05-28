@@ -1,0 +1,92 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+    ">
+    <!--springp配置-->
+    <!--第一步：扫描包，能够实例化的类需要扫描-->
+    <!--开启spring包注解扫描器，开启后可以通过注解创建bean对象-->
+    <context:component-scan base-package="com.lyrk.service"></context:component-scan>
+    <!--2.配置数据库连接源-->
+    <bean  class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <!--讲database.properties数据源配置注入到PropertyPlaceholderConfigurer类中-->
+        <!--location为其中的私有化属性，意思为数据源的位置-->
+        <property name="location">
+            <value>classpath:database.properties</value>
+        </property>
+    </bean>
+    <!--3.配置数据库连接池-->
+    <!--数据库连接池配置，阿里连接池-->
+    <!--讲datasource文件-->
+    <bean id="datasource" class="com.alibaba.druid.pool.DruidDataSource"
+          destroy-method="close">
+        <property name="name" value="usercore"/>
+        <property name="url" value="${url}"/>
+        <property name="username" value="${user}"/>
+        <property name="password" value="${pwd}"/>
+        <!--配置监控统计拦截的filters，-->
+        <!--<property name="filters" value="stat"/>-->
+        <property name="filters" value="log4j"/>
+        <!---->
+        <property name="maxActive" value="50"/>
+        <!--连接池建立时创建的初始化连接数-->
+        <property name="initialSize" value="1"/>
+        <!--配置获取连接的最大等待时间-->
+        <property name="maxWait" value="60000"/>
+        <!--连接池中最小空闲连接数-->
+        <property name="minIdle" value="15"/>
+        <!--等待关闭的空闲连接的时间间隔，即每3秒扫描并关闭空闲连接-->
+        <property name="timeBetweenEvictionRunsMillis" value="600000"/>
+        <!--配置一个连接的最小存活时间为3秒-->
+        <property name="minEvictableIdleTimeMillis" value="600000"/>
+        <property name="validationQuery" value="SELECT 'x'"/>
+        <property name="testWhileIdle" value="true"/>
+        <property name="testOnBorrow" value="false"/>
+        <property name="testOnReturn" value="false"/>
+        <property name="poolPreparedStatements" value="true"/>
+        <!--每一个数据库连接最大执行的sql语句为50条-->
+        <property name="maxPoolPreparedStatementPerConnectionSize" value="150"/>
+    </bean>
+
+    <!--4.开启spring集成mybatis-->
+    <!--设置sqlsesionFactory bean 对象-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--configLocation和dataSource还是SqlSessionFactoryBean类中的两个私有化属性-->
+        <!--configLocation参数表示xml配置文件，dataSource表示数据库配置分装后的DruidDataSource类bean对象-->
+        <property name="dataSource" ref="datasource"/>
+        <property name="configLocation" >
+            <value>classpath:config-mybatis.xml</value>
+        </property>
+    </bean>
+    <!--5.开启mapper扫描器-->
+    <!--实现mapper-bean注入，不需要dao层的实现类-->
+    <!--dao层扫描器-->
+    <bean id="mapperScannerConfigurer"
+          class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.lyrk.dao"></property>
+    </bean>
+    <!--6.添加日志增强-->
+    <!--设置增强处理工具类bean对象-->
+    <bean id="serviceLogger2" class="com.lyrk.util.ServiceLogger"></bean>
+
+    <!--7.启动注解开启面向切面编程的自动代理，可以识别注解-->
+    <!--注解开启后可以事项前置和后置增强的日志打印-->
+    <aop:aspectj-autoproxy/>
+    <!--8.事务控制，数据源的事务管理器，需要加载数据库的数据源-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="datasource"/>
+    </bean>
+
+    <!--事务控制方法2：直接采用注解的形式导入事务控制，在需要加事务的地方添加@tran-->
+    <tx:annotation-driven transaction-manager="transactionManager"></tx:annotation-driven>
+</beans>
+

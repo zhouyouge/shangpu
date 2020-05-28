@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyrk.dao.BillDao">
+    <insert id="addBill" parameterType="Bill_informationExpression">
+    insert  into bill_informationexpression (billingName,ratepayerNumber,billAddress,billPhone
+,bankName,billAccount,rent_taxRate,breakoutName,bill_createtime,bill_updatetime
+)
+values(#{billingName},#{ratepayerNumber},#{billAddress},#{billPhone}
+,#{bankName},#{billAccount},#{rent_taxRate},#{breakoutName},#{bill_createtime},
+#{bill_updatetime})
+    </insert>
+
+    <select id="BillCount" resultType="int" parameterType="BillParameter">
+       SELECT count(billId) from bill_informationexpression
+        <trim>
+            <where>
+                1=1
+                <if test="bill_createtime!=null and bill_createtime!='' and bill_updatetime!='' and
+  bill_updatetime!=null">
+                    and   bill_createtime &gt;= #{bill_createtime}
+                    and bill_createtime &lt;= #{bill_updatetime}
+                </if>
+                <if test="billingName!=null and billingName!=''">
+                    and billingName like concat ('%',#{billingName},'%')
+                </if>
+            </where>
+        </trim>
+    </select>
+    <!--分页查询-->
+    <select id="queryBillList" resultType="bill_informationexpression" parameterType="BillParameter">
+        SELECT * from bill_informationexpression
+        <trim>
+            <where>
+                1=1
+                <if test="bill_createtime!=null and bill_createtime!='' and bill_updatetime!='' and
+  bill_updatetime!=null">
+                    and   bill_createtime &gt;= #{bill_createtime}
+                    and bill_createtime &lt;= #{bill_updatetime}
+                </if>
+                <if test="billingName!=null and billingName!=''">
+                    and billingName like concat ('%',#{billingName},'%')
+                </if>
+            </where>
+        </trim>
+        order By
+        <if test="orderBy!=null and orderBy!=''">
+            ${orderBy}
+        </if>
+
+        <if test="orderBy!=null or orderBy!=''">
+            ${orderType}
+        </if>
+        limit #{PageIndex},#{PageSize}
+    </select>
+
+    <select id="toUpdateBillOut" parameterType="bill_informationexpression" resultType="bill_informationexpression" >
+        select * from bill_informationexpression where billId=#{billId}
+    </select>
+
+    <update id="updateBillOut" parameterType="bill_informationexpression">
+        update bill_informationexpression set
+       billingName= #{billingName},ratepayerNumber=#{ratepayerNumber},
+       billAddress=#{billAddress},
+       billPhone=#{billPhone},bankName=#{bankName},
+       billAccount=#{billAccount},rent_taxRate=#{rent_taxRate},
+       breakoutName=#{breakoutName},bill_createtime=#{bill_createtime},
+       bill_updatetime=#{bill_updatetime}
+          where billId=#{billId}
+    </update>
+
+    <delete id="deleteBill" parameterType="bill_informationexpression">
+        delete from bill_informationexpression where billId=#{billId}
+    </delete>
+</mapper>

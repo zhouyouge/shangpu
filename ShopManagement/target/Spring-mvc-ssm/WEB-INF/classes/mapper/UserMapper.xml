@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lyrk.dao.UserDao">
+
+ <!--   <select id="queryUserByName" parameterType="string" resultType="com.lyrk.entity.User" >
+        select * from user where userName=#{name}
+    </select>
+-->
+    <resultMap id="userMap" type="User">
+        <result property="userId" column="userId"/>
+        <result property="userName" column="userName"/>
+        <result property="password" column="password"/>
+        <result property="roleName" column="roleName"/>
+        <association property="role" javaType="Role">
+            <result property="roleName" column="roleName"/>
+        </association>
+    </resultMap>
+    <select id="getUsers" resultMap="userMap"  parameterType="User">
+ SELECT u.userId,u.userName,u.password,r.roleName from user u INNER JOIN  user_role ru ON
+        u.userId=ru.userId INNER join role r on ru.roleId=r.id where u.userName=#{userName} and u.password=#{password}
+    </select>
+</mapper>

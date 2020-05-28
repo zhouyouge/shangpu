@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyrk.dao.BreakOutDao">
+    <insert id="addBreak" parameterType="Test">
+    insert  into breakout_information (breakoutName,brabbreviation,brcoding,brprincipal,brworkType
+,brcoveredArea,broperatingArea,brresidentialPool,broperationalRegime,brcomment,brBreakoutDiagram,brBreakoutLicense,
+brBreakoutStatus,br_createtime,br_updatetime
+)
+values(#{breakoutName},#{brabbreviation},#{brcoding},#{brprincipal},#{brworkType}
+,#{brcoveredArea},#{broperatingArea},#{brresidentialPool},#{broperationalRegime},#{brcomment},
+#{brBreakoutDiagram},#{brBreakoutLicense},
+#{brBreakoutStatus},now(),now())
+    </insert>
+
+    <select id="queryCount" resultType="int" parameterType="BreakParameter">
+       SELECT count(breakoutName) from Breakout_information
+    </select>
+    <!--分页查询-->
+    <select id="queryBreakOutList" resultType="Breakout" parameterType="BreakParameter">
+        SELECT * from Breakout_information
+      <trim>
+          <where>
+              <if test="breakoutName!=null and breakoutName!='' ">
+                  breakoutName=#{breakoutName}
+              </if>
+          </where>
+      </trim>
+            order By
+            <if test="orderBy!=null and orderBy!=''">
+                ${orderBy}
+            </if>
+
+            <if test="orderBy!=null or orderBy!=''">
+                ${orderType}
+            </if>
+
+
+        limit #{PageIndex},#{PageSize}
+    </select>
+
+    <select id="toUpdateBreakOut" parameterType="Breakout" resultType="Test" >
+        select * from Breakout_information where breakoutName=#{breakoutName}
+    </select>
+    
+    <update id="updateBreakOut" parameterType="Breakout">
+        update Breakout_information set
+                            brabbreviation=#{brabbreviation},
+                            brcoding=#{brcoding},
+                            brprincipal=#{brprincipal},
+                            brworkType=#{brworkType},
+                            brcoveredArea=#{brcoveredArea},
+                            broperatingArea=#{broperatingArea},
+                            brresidentialPool=#{brresidentialPool},
+                            broperationalRegime=#{broperationalRegime},
+                            brcomment=#{brcomment},
+                            brBreakoutDiagram=#{brBreakoutDiagram},
+                            brBreakoutLicense=#{brBreakoutLicense},
+                            brBreakoutStatus=#{brBreakoutStatus},
+                            br_updatetime=now()
+          where breakoutName=#{breakoutName}
+    </update>
+
+    <delete id="deleteBreakOut" parameterType="Breakout">
+        delete from Breakout_information where breakoutName=#{breakoutName}
+    </delete>
+</mapper>

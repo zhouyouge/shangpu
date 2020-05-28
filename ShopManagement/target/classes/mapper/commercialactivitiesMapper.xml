@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyrk.dao.CommercialactivitiesDao">
+    <select id="getCommer" resultType="Commercialactivities" parameterType="com.lyrk.entity.CommercialParameter">
+        select * from commercialactivities
+        <trim>
+            <where>
+                1=1
+                <if test="cc_createDate!=null and cc_createDate!='' and cc_modificationDate!='' and
+  cc_modificationDate!=null">
+                    and   cc_createDate &gt;= #{cc_createDate}
+                    and cc_createDate &lt;= #{cc_modificationDate}
+                </if>
+                <if test="commercialName!=null and commercialName!='' ">
+                    and  commercialName like #{commercialName}
+                </if>
+            </where>
+        </trim>
+        limit #{PageIndex},#{PageSize}
+    </select>
+    <insert id="addCommercial" parameterType="Commercialactivities">
+insert into commercialactivities (commercialName,cc_createDate,cc_modificationDate,commercialStatus)
+values(#{commercialName},now(),now(),#{commercialStatus})
+    </insert>
+
+    <select id="queryCommercialCount" resultType="int" parameterType="com.lyrk.entity.CommercialParameter">
+        SELECT count(*) from commercialactivities
+        <trim>
+            <where>
+                1=1
+                <if test="cc_createDate!=null and cc_createDate!='' and cc_modificationDate!='' and
+  cc_modificationDate!=null">
+                    and   cc_createDate &gt;= #{cc_createDate}
+                    and cc_createDate &lt;= #{cc_modificationDate}
+                </if>
+                <if test="commercialName!=null and commercialName!='' ">
+                    and  commercialName like #{commercialName}
+                </if>
+            </where>
+        </trim>
+    </select>
+
+    <!--修改业态回显-->
+    <select id="toUpdateCommercialactivities" parameterType="Commercialactivities" resultType="Commercialactivities" >
+        select * from commercialactivities where commercialName=#{commercialName}
+    </select>
+    <update id="updateCommercial" parameterType="Commercialactivities">
+        <trim prefix=" update commercialactivities set " prefixOverrides="," suffixOverrides=",">
+            <if test="commercialName!='' and commercialName!=null" >
+                commercialName=#{commercialName},
+            </if>
+            <if test="cc_createDate!='' and cc_createDate!=null" >
+                cc_createDate=#{cc_createDate},
+            </if>
+            <if test="cc_modificationDate!='' and cc_modificationDate!=null" >
+                cc_modificationDate=#{cc_modificationDate},
+            </if>
+            <if test="commercialStatus!='' and commercialStatus!=null" >
+                commercialStatus=#{commercialStatus},
+            </if>
+        </trim>
+          where commercialId=#{commercialId}
+    </update>
+
+    <delete id="deleteCommercial" parameterType="Commercialactivities">
+        delete from commercialactivities where commercialId=#{commercialId}
+    </delete>
+
+    <!--删除业态信息，删除前查询摊位租户和品牌-->
+    <select id="getBooth" parameterType="Commercialactivities" resultType="int">
+      SELECT  count(*) from commercialactivities c INNER JOIN boothInformation b  on c.commercialName=b.planningForms
+where c.commercialName=#{commercialName}
+    </select>
+    <select id="getTenement" parameterType="Commercialactivities" resultType="int">
+   SELECT  count(*) from commercialactivities c INNER JOIN tenementlnformation t  on c.commercialName=t.managementForms
+where c.commercialName=#{commercialName}
+    </select>
+    <select id="getBrandInformation" parameterType="Commercialactivities" resultType="int">
+   SELECT  count(*) from commercialactivities c INNER JOIN brandInformation b  on c.commercialName=b.commercialActivities
+where c.commercialName=#{commercialName}
+    </select>
+
+
+</mapper>

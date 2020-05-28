@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyrk.dao.ContractDao">
+    <insert id="addContract" parameterType="Townercontract">
+
+
+    insert  into townercontract (breakId,comparyTitle,companyAddress,comanyPhone,breakoutName
+)
+values(#{breakId},#{comparyTitle},#{companyAddress},#{comanyPhone},#{breakoutName})
+    </insert>
+
+    <select id="ContractCount" resultType="int" parameterType="ContractParameter">
+       SELECT count(breakId) from townercontract
+        <trim>
+            <where>
+                1=1
+                <if test="startTime!=null and startTime!='' and outTime!='' and
+  outTime!=null">
+                    and   startTime &gt;= #{startTime}
+                    and startTime &lt;= #{outTime}
+                </if>
+                <if test="comparyTitle!=null and comparyTitle!=''">
+                    and comparyTitle like concat ('%',#{comparyTitle},'%')
+                </if>
+            </where>
+        </trim>
+    </select>
+    <!--分页查询-->
+    <select id="queryTowerList" resultType="Townercontract" parameterType="ContractParameter">
+        SELECT * from townercontract
+        <trim>
+            <where>
+                1=1
+                <if test="startTime!=null and startTime!='' and outTime!='' and
+  outTime!=null">
+                    and   startTime &gt;= #{startTime}
+                    and startTime &lt;= #{outTime}
+                </if>
+                <if test="comparyTitle!=null and comparyTitle!=''">
+                    and comparyTitle like concat ('%',#{comparyTitle},'%')
+                </if>
+            </where>
+        </trim>
+        order By
+        <if test="orderBy!=null and orderBy!=''">
+            ${orderBy}
+        </if>
+
+        <if test="orderBy!=null or orderBy!=''">
+            ${orderType}
+        </if>
+        limit #{PageIndex},#{PageSize}
+    </select>
+
+    <select id="toUpdateContractOut" parameterType="Townercontract" resultType="Townercontract" >
+        select * from townercontract where breakId=#{breakId}
+    </select>
+
+    <update id="updateContractOut" parameterType="Townercontract">
+        update townercontract set
+       comparyTitle=#{comparyTitle},companyAddress=#{companyAddress},
+       comanyPhone=#{comanyPhone},
+       breakoutName=#{breakoutName},outTime=now()
+          where breakId=#{breakId}
+    </update>
+
+    <delete id="deleteContract" parameterType="Townercontract">
+        delete from townercontract where breakId=#{breakId}
+    </delete>
+</mapper>

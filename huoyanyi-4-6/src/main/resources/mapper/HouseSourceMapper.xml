@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyrk.dao.HouseSourceDao">
+    <insert id="addHouseSource" parameterType="Housingsource">
+  insert into housingsource (hoseSource,produceLabel,propertyOwner,hourseGoDown
+  ,purchaserName,startTime,outTime,gatheringId)
+  values(#{hoseSource},#{produceLabel},#{propertyOwner},#{hourseGoDown}
+  ,#{purchaserName},now(),now(),#{gatheringId})
+  </insert>
+    <select id="HouseSourceCount" resultType="int" parameterType="HouseSourceParameter">
+       select count(houseId) from housingsource
+        <trim>
+            <where>
+            1=1
+                <if test="startTime!=null and startTime!='' and outTime!='' and
+  outTime!=null">
+                    and   startTime &gt;= #{startTime}
+                    and startTime &lt;= #{outTime}
+                </if>
+                <if test="hoseSource!=null and hoseSource!=''">
+                    and hoseSource like concat ('%',#{hoseSource},'%')
+                </if>
+            </where>
+        </trim>
+    </select>
+    <!--分页查询-->
+    <select id="queryHouseSourceList" resultType="Housingsource" parameterType="HouseSourceParameter">
+        SELECT * from housingsource
+        <trim>
+            <where>
+                1=1
+                <if test="startTime!=null and startTime!='' and outTime!='' and
+  outTime!=null">
+                    and   startTime &gt;= #{startTime}
+                    and startTime &lt;= #{outTime}
+                </if>
+                <if test="hoseSource!=null and hoseSource!=''">
+                    and hoseSource like concat ('%',#{hoseSource},'%')
+                </if>
+            </where>
+        </trim>
+        order By
+        <if test="orderBy!=null and orderBy!=''">
+            ${orderBy}
+        </if>
+
+        <if test="orderBy!=null or orderBy!=''">
+            ${orderType}
+        </if>
+        limit #{PageIndex},#{PageSize}
+    </select>
+
+    <select id="toUpdateHouseSourceOut" parameterType="Housingsource" resultType="housingsource" >
+        select * from housingsource where houseId=#{houseId}
+    </select>
+
+    <update id="updateHouseSourceOut" parameterType="Housingsource">
+        update housingsource set
+       hoseSource= #{hoseSource},ProduceLabel=#{ProduceLabel},
+       propertyOwner=#{propertyOwner},
+       hourseGoDown=#{hourseGoDown},purchaserName=#{purchaserName},
+       startTime=#{startTime},outTime=#{outTime},
+       gatheringId=#{gatheringId}
+
+          where houseId=#{houseId}
+    </update>
+
+    <delete id="deleteHouseSource" parameterType="Housingsource">
+        delete from housingsource where houseId=#{houseId}
+    </delete>
+</mapper>

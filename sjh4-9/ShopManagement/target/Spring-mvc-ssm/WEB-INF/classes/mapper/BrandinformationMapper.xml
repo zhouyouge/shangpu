@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyrk.dao.BrandinformationDao">
+    <insert id="addBrandinformation" parameterType="Brandinformation">
+    insert  into brandinformation(brandCoding,brandNameCh,brandNameEh,commercialActivities
+,birthplaceOfBrand,storeProperties,businessNature,officialWebsite,headquarterAddress,brandDescription,accessory,tenementId,startTime,outTime
+)
+values(#{brandCoding},#{brandNameCh},#{brandNameEh},#{commercialActivities}
+,#{birthplaceOfBrand},#{storeProperties},#{businessNature},#{officialWebsite},#{headquarterAddress},#{brandDescription}
+,#{accessory},#{tenementId},now(),now()
+)
+    </insert>
+    <select id="HouseSourceCount" resultType="int" parameterType="BrandinformationParameter">
+        select count(brandId) from brandinformation
+        <trim>
+            <where>
+                1=1
+                <if test="startTime!=null and startTime!='' and outTime!='' and
+  outTime!=null">
+                    and startTime &gt;= #{startTime}
+                    and startTime &lt;= #{outTime}
+                </if>
+                <if test="brandCoding!=null and brandCoding!=''">
+                    and brandCoding like concat ('%',#{brandCoding},'%')
+                </if>
+            </where>
+        </trim>
+    </select>
+    <!--分页查询-->
+    <select id="queryBrandinformation" resultType="Brandinformation" parameterType="BrandinformationParameter">
+        SELECT * from brandinformation
+        <trim>
+            <where>
+                1=1
+                <if test="startTime!=null and startTime!='' and outTime!='' and
+  outTime!=null">
+                    and startTime &gt;= #{startTime}
+                    and startTime &lt;= #{outTime}
+                </if>
+                <if test="brandCoding!=null and brandCoding!=''">
+                    and brandCoding like concat ('%',#{brandCoding},'%')
+                </if>
+            </where>
+        </trim>
+        order By
+        <if test="orderBy!=null and orderBy!=''">
+            ${orderBy}
+        </if>
+
+        <if test="orderBy!=null or orderBy!=''">
+            ${orderType}
+        </if>
+        limit #{PageIndex},#{PageSize}
+    </select>
+    <select id="toupdateBrandinformation" parameterType="Brandinformation" resultType="Brandinformation" >
+        select * from brandinformation where brandId=#{brandId}
+    </select>
+    <update id="updaetBrandinformation" parameterType="Brandinformation">
+        update brandinformation set
+       brandCoding= #{brandCoding},brandNameCh=#{brandNameCh},
+       commercialActivities=#{commercialActivities},
+       birthplaceOfBrand=#{birthplaceOfBrand},storeProperties=#{storeProperties},
+       businessNature=#{businessNature},
+       officialWebsite=#{officialWebsite},
+       brandDescription=#{brandDescription},
+       accessory=#{accessory},
+       tenementId=#{tenementId},
+       outTime=now()
+          where brandId=#{brandId}
+    </update>
+    <delete id="deleteBrandinformation" parameterType="Brandinformation">
+        delete from brandinformation where brandId=#{brandId}
+    </delete>
+</mapper>

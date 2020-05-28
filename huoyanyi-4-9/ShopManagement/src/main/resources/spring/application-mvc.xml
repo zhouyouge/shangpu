@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!--1.启动spring的注解的包扫描器，可以使用@cotroller来标注我们的控制器层-->
+    <context:component-scan base-package="com.lyrk.controller"/>
+
+    <!--2.开启使用注解扫描处理器，使用@RequestMapping注解把url请求映射到具体的处理器方法-->
+    <mvc:annotation-driven/>
+    <!--3.静态资源的映射路径，mapping的路径是写在页面的，location是保护起来的静态资源的真实路径-->
+    <!--需要在webapp下创建location中需要的静态资源路径的包，然后前后加/包名/-->
+    <!--mapping的名字不能跟真实的location的路径一致-->
+    <mvc:resources mapping="/statics/**" location="/static1/"/>
+    <mvc:resources mapping="/css/**" location="/css/"/>
+    <mvc:resources mapping="/js/**" location="/js/"/>
+    <mvc:resources mapping="/fenchang/**" location="/fenchang/"/>
+    <mvc:resources mapping="/images/**" location="/images/"/>
+    <mvc:resources mapping="/commons/**" location="/commons/"/>
+    <!--4.视图解析器-->
+    <!--告诉spring-mvc，在控制器中配置了逻辑视图映射，必须给逻辑视图加上前缀-->
+    <!--在控制器层中使用 ModelAndView mv=new ModelAndView();对象调用的setViewName中的名字加上前缀和后缀-->
+    <!--然后在浏览器直接访问-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--跟在控制器层找到的ModelAndView对象调用的setViewName中的名字加上前缀和后缀-->
+        <!--前缀是路径，后缀是文件的类型名称-->
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!--BeanNameHandlerMapping，声明控制器层能通过bean的name值作为路径地址-->
+    <bean class="org.springframework.web.servlet.mvc.support.ControllerBeanNameHandlerMapping"></bean>
+
+
+    <!--6.全局的报错机制，属于友好提示，页面直接报错用户体验不好-->
+    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <!--注入一个名称为error的jsp报错页面，当出现错误的时候跳转至该页面-->
+                <prop key="java.lang.RuntimeException">error</prop>
+            </props>
+        </property>
+    </bean>
+
+
+</beans>

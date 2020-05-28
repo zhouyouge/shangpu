@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lyrk.dao.QuanxianDao">
+    <select id="noRoleList" resultType="Quanxian" >
+SELECT * from  role where id not in
+(      SELECT ro.id as id
+ from role  ro INNER JOIN user u on ro.id=u.userId)
+    </select>
+    <insert id="addRole" parameterType="Quanxian">
+insert into role(roleName,comment,roleStatus,ro_createDate,ro_modificationDate)
+ values(#{roleName},#{comment},#{roleStatus},now(),now())
+    </insert>
+<!--    <select id="getRole" parameterType="Quanxian" resultType="Quanxian">
+    SELECT ro.id,ro.roleName,ro.comment,u.userName,ro.roleStatus,ro.ro_createDate,ro.ro_modificationDate
+ from role  ro INNER JOIN user u on ro.id=u.userId where id=#{id}
+    </select>-->
+    <select id="getRole" parameterType="Quanxian" resultType="Quanxian">
+    SELECT ro.id,ro.roleName,ro.comment,u.userName,ro.roleStatus,ro.ro_createDate,ro.ro_modificationDate
+    from role  ro INNER JOIN user_role ur on ro.id=ur.roleId INNER JOIN  user u on u.userId=ur.userId where ro.id=#{id}
+     </select>
+    <select id="getnoRole" parameterType="Quanxian" resultType="Quanxian">
+ SELECT id,roleName,comment,roleStatus,ro_createDate,ro_modificationDate
+    from role  where id=#{id}
+     </select>
+<update id="updateRole" parameterType="Quanxian">
+    update role SET roleName=#{roleName},comment=#{comment},roleStatus=#{roleStatus},ro_modificationDate=#{ro_modificationDate}
+ where id=#{id}
+</update>
+    <delete id="deleteRole" parameterType="Quanxian">
+delete from role where id=#{id}
+    </delete>
+<!--    <select id="RoleList" parameterType="QuanxianParameter" resultType="Quanxian">
+       SELECT ro.id,ro.roleName,ro.comment,u.userName,ro.ro_createDate,ro.ro_modificationDate
+ from role  ro INNER JOIN user u on ro.id=u.userId
+    </select>-->
+    <select id="RoleList" parameterType="QuanxianParameter" resultType="Quanxian">
+    SELECT ro.id,ro.roleName,ro.comment,u.userName,ro.roleStatus,ro.ro_createDate,ro.ro_modificationDate
+    from role  ro INNER JOIN user_role ur on ro.id=ur.roleId INNER JOIN  user u on u.userId=ur.userId
+    </select>
+    <insert id="addUser" parameterType="Quanxian">
+        insert into user(userName,password,userRank)
+ values(#{userName},#{password},#{userRank})
+    </insert>
+    <select id="getUser" parameterType="Quanxian" resultType="Quanxian">
+       SELECT userName,password,userCreateTime,userModificationDate,userRank
+ from user where userId=#{userId}
+    </select>
+    <update id="updateUser" parameterType="Quanxian">
+ update  user  set  userName=#{userName},password=#{password},
+ userRank=#{userRank},userModificationDate=now()
+ where  userId=#{userId}
+    </update>
+    <delete id="deleteUser" parameterType="Quanxian">
+    DELETE   from  user  where   userId =#{userId}
+    </delete>
+    <select id="UserList" parameterType="QuanxianParameter" resultType="Quanxian">
+     SELECT u.userId,u.userName,u.password,u.userRank,ro.comment,ro.roleName,u.userCreateTime,u.userModificationDate
+ from role  ro INNER JOIN user_role ur on ro.id=ur.roleId INNER JOIN  user u on u.userId=ur.userId
+    </select>
+    <select id="noUserList" parameterType="QuanxianParameter" resultType="Quanxian">
+SELECT userId,userName,password,userRank,userCreateTime,userModificationDate from user where userId not in (
+ SELECT u.userId from role  ro INNER JOIN user_role ur on ro.id=ur.roleId INNER JOIN  user u on u.userId=ur.userId)
+    </select>
+    <!--用户和角色对照表-->
+    <select id="UserRoleList" resultType="Quanxian">
+    SELECT c.id ,c.userId,us.userName,us.userRank,c.roleId,c.roleName,c.comment,c.ru_createDate,c.ru_modificationDate  from
+    (SELECT a.id ,a.userId,a.roleId,b.roleName,b.comment,a.ru_createDate,a.ru_modificationDate
+    from (SELECT id,userId,roleId,ru_createDate,ru_modificationDate from user_role where   roleId  in
+    (SELECT ur.roleId as roleId
+    from role ro INNER JOIN  user_role ur on ro.id=ur.roleId
+    INNER JOIN   user u    on
+     ur.userId=u.userId  ))a INNER JOIN (SELECT id,roleName,comment from role where  id   in
+    (SELECT ur.roleId as id
+    from role ro INNER JOIN  user_role ur on ro.id=ur.roleId
+    INNER JOIN   user u    on
+     ur.userId=u.userId  ))b  on a.id=b.id)c INNER JOIN
+    user us on c.userId=us.userId
+    </select>
+    <select id="noUserRoleList" resultType="Quanxian">
+     SELECT a.id,a.userId,a.roleId,b.roleName,b.comment,a.ru_createDate,a.ru_modificationDate  from
+     (SELECT id,userId,roleId,ru_createDate,ru_modificationDate from user_role where   roleId not in
+    (SELECT ur.roleId as roleId
+    from role ro INNER JOIN  user_role ur on ro.id=ur.roleId
+    INNER JOIN   user u    on
+     ur.userId=u.userId  ))a INNER JOIN (SELECT id,roleName,comment from role where  id not  in
+    (SELECT ur.roleId as id
+    from role ro INNER JOIN  user_role ur on ro.id=ur.roleId
+    INNER JOIN   user u    on
+     ur.userId=u.userId  ))b  on a.id=b.id
+     </select>
+    <update id="updateUserRole" parameterType="Quanxian">
+        update user_role set userId=66,roleId=66,ru_modificationDate=now() where id=6
+    </update>
+    <delete id="deleteUserRole" parameterType="Quanxian">
+    delete from  user_role  where  id=7
+    </delete>
+    <insert id="addUserRole" parameterType="Quanxian" >
+        insert into  user_role(userId,roleId,ru_createDate,ru_modificationDate)
+        values(#{userId},#{roleId},now(),now())
+    </insert>
+    <select id="getUserRole" parameterType="Quanxian"  resultType="Quanxian">
+        SELECT * from user_role where id=#{id}
+    </select>
+    <select id="usersList" resultType="Quanxian">
+        select * from user;
+    </select>
+    <select id="rolesList" resultType="Quanxian">
+        select * from role;
+    </select>
+    <select id="getUserRoleAdd" resultType="int" parameterType="Quanxian">
+        SELECT count(*)from  user_role where userId=#{userId} and roleId=#{roleId}
+    </select>
+</mapper>
